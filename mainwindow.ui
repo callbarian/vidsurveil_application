@@ -76,8 +76,7 @@
      </sizepolicy>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-</string>
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -173,6 +172,9 @@
      </property>
     </widget>
     <widget class="QGraphicsView" name="timeline_4">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -187,6 +189,9 @@
     </widget>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -196,7 +201,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab1">
      <property name="sizePolicy">
@@ -208,17 +213,17 @@
      <attribute name="title">
       <string>Original Videos</string>
      </attribute>
-     <widget class="QTreeView" name="treeView1">
+     <widget class="QListView" name="playlistView">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>0</x>
         <y>0</y>
         <width>511</width>
         <height>271</height>
        </rect>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -235,7 +240,7 @@
      <widget class="QTreeView" name="treeView2">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>0</x>
         <y>0</y>
         <width>511</width>
         <height>271</height>
@@ -264,6 +269,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>80</x>
