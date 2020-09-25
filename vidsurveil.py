@@ -57,7 +57,9 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-       
+        
+        self.path_name=[]
+
         #start
         self.player = QMediaPlayer()
 
@@ -88,6 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(path)
         while path:
             video=path.pop()
+            self.path_name.append(video)
             self.playlist.addMedia(
                 QMediaContent(
                     QUrl.fromLocalFile(video)
@@ -143,7 +146,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if i > -1:
             ix = self.model.index(i)
             self.ui.playlistView.setCurrentIndex(ix)
-            print(ix)
+            const=self.model.playlist.media(i)
+            #playlistView
+            print(self.path_name[i])
+
 
     def toggle_viewer(self, state):
         if state:
