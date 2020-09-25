@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import sys
+import os
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
@@ -56,9 +57,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
-        self.ui.draw_miniview(os.getcwd()+'/test.mp4')
         self.ui.setupUi(self)
-       
+
+        self.path_name=[]
         #start
         self.player = QMediaPlayer()
 
@@ -81,7 +82,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #print('@@@ui type is ',type(self.ui.actionAdd_Files))  
         #self.ui.~~~
         self.ui.actionAdd_Files.triggered.connect(self.open_file)
-        
         self.show()
 
     def open_file(self):
@@ -89,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(path)
         while path:
             video=path.pop()
+            self.path_name.append(video)
             self.playlist.addMedia(
                 QMediaContent(
                     QUrl.fromLocalFile(video)
@@ -144,7 +145,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if i > -1:
             ix = self.model.index(i)
             self.ui.playlistView.setCurrentIndex(ix)
-            print(ix)
+            const=self.model.playlist.media(i)
+            print(self.path_name[i])
+            self.ui.draw_miniview(self.path_name[i])
 
     def toggle_viewer(self, state):
         if state:
