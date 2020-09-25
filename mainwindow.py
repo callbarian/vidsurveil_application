@@ -8,9 +8,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QImage
+from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsPixmapItem
+import cv2
+import os
 
+class Ui_MainWindow(QtWidgets.QMainWindow):
 
-class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
@@ -20,7 +27,6 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setStyleSheet("")
         MainWindow.setAnimated(True)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -47,25 +53,37 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.mini_viewer.sizePolicy().hasHeightForWidth())
         self.mini_viewer.setSizePolicy(sizePolicy)
-        self.mini_viewer.setStyleSheet("")
+        self.mini_viewer.setStyleSheet("\n"
+"")
         self.mini_viewer.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.mini_viewer.setFrameShadow(QtWidgets.QFrame.Raised)
         self.mini_viewer.setObjectName("mini_viewer")
         self.timeline_1 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.timeline_1.setGeometry(QtCore.QRect(50, 80, 891, 21))
-        self.timeline_1.setStyleSheet("")
+        self.timeline_1.setGeometry(QtCore.QRect(47, 77, 894, 24))
+        self.timeline_1.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-color: rgb(250, 240, 242);")
         self.timeline_1.setObjectName("timeline_1")
         self.mini_view_1 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.mini_view_1.setGeometry(QtCore.QRect(50, 110, 891, 81))
-        self.mini_view_1.setStyleSheet("")
+        self.mini_view_1.setGeometry(QtCore.QRect(47, 107, 894, 84))
+        self.mini_view_1.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-color: rgb(146, 130, 229);")
         self.mini_view_1.setObjectName("mini_view_1")
         self.timeline_2 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.timeline_2.setGeometry(QtCore.QRect(50, 210, 891, 21))
-        self.timeline_2.setStyleSheet("")
+        self.timeline_2.setGeometry(QtCore.QRect(47, 217, 894, 24))
+        self.timeline_2.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-left-color: rgb(255, 150, 150);\n"
+                                        "border-right-color: rgb(255, 255, 255);\n"
+                                        "border-top-color: rgb(255, 255, 255);\n"
+                                        "border-bottom-color: rgb(255, 255, 255);\n")
         self.timeline_2.setObjectName("timeline_2")
         self.mini_view_2 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.mini_view_2.setGeometry(QtCore.QRect(50, 320, 891, 81))
-        self.mini_view_2.setStyleSheet("")
+        self.mini_view_2.setGeometry(QtCore.QRect(47, 317, 894, 84))
+        self.mini_view_2.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-color: rgb(146, 130, 229);")
         self.mini_view_2.setObjectName("mini_view_2")
         self.push_extract_1 = QtWidgets.QPushButton(self.mini_viewer)
         self.push_extract_1.setGeometry(QtCore.QRect(40, 40, 141, 31))
@@ -77,16 +95,28 @@ class Ui_MainWindow(object):
         self.push_extract_1.setStyleSheet("")
         self.push_extract_1.setObjectName("push_extract_1")
         self.timeline_3 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.timeline_3.setGeometry(QtCore.QRect(50, 250, 891, 21))
-        self.timeline_3.setStyleSheet("")
+        self.timeline_3.setGeometry(QtCore.QRect(47, 251, 894, 24))
+        self.timeline_3.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-left-color: rgb(150, 255, 150);\n"
+                                        "border-right-color: rgb(255, 255, 255);\n"
+                                        "border-top-color: rgb(255, 255, 255);\n"
+                                        "border-bottom-color: rgb(255, 255, 255);\n")
         self.timeline_3.setObjectName("timeline_3")
         self.timeline_4 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.timeline_4.setEnabled(False)
-        self.timeline_4.setGeometry(QtCore.QRect(50, 290, 891, 21))
-        self.timeline_4.setStyleSheet("")
+        self.timeline_4.setGeometry(QtCore.QRect(47, 287, 894, 24))
+        self.timeline_4.setStyleSheet("border-style: solid;\n"
+                                        "border-width: 3px;\n"
+                                        "border-left-color: rgb(150, 150, 255);\n"
+                                        "border-right-color: rgb(255, 255, 255);\n"
+                                        "border-top-color: rgb(255, 255, 255);\n"
+                                        "border-bottom-color: rgb(255, 255, 255);")
         self.timeline_4.setObjectName("timeline_4")
+        self.textEdit = QtWidgets.QTextEdit(self.mini_viewer)
+        self.textEdit.setGeometry(QtCore.QRect(500, 20, 441, 51))
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit.setStyleSheet("background-color: transparent;")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setEnabled(True)
         self.tabWidget.setGeometry(QtCore.QRect(20, 0, 511, 301))
         self.tabWidget.setObjectName("tabWidget")
         self.tab1 = QtWidgets.QWidget()
@@ -96,10 +126,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tab1.sizePolicy().hasHeightForWidth())
         self.tab1.setSizePolicy(sizePolicy)
         self.tab1.setObjectName("tab1")
-        self.playlistView = QtWidgets.QListView(self.tab1)
-        self.playlistView.setEnabled(True)
-        self.playlistView.setGeometry(QtCore.QRect(0, 0, 511, 271))
-        self.playlistView.setObjectName("playlistView")
+        self.treeView1 = QtWidgets.QTreeView(self.tab1)
+        self.treeView1.setGeometry(QtCore.QRect(10, 0, 511, 271))
+        self.treeView1.setAcceptDrops(True)
+        self.treeView1.setObjectName("treeView1")
         self.tabWidget.addTab(self.tab1, "")
         self.tab_2 = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -109,25 +139,13 @@ class Ui_MainWindow(object):
         self.tab_2.setSizePolicy(sizePolicy)
         self.tab_2.setObjectName("tab_2")
         self.treeView2 = QtWidgets.QTreeView(self.tab_2)
-        self.treeView2.setGeometry(QtCore.QRect(0, 0, 511, 271))
+        self.treeView2.setGeometry(QtCore.QRect(10, 0, 511, 271))
         self.treeView2.setAcceptDrops(True)
         self.treeView2.setObjectName("treeView2")
         self.tabWidget.addTab(self.tab_2, "")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.treeView2_2 = QtWidgets.QTreeView(self.tab)
-        self.treeView2_2.setGeometry(QtCore.QRect(0, 0, 511, 271))
-        self.treeView2_2.setAcceptDrops(True)
-        self.treeView2_2.setObjectName("treeView2_2")
-        self.pushButton = QtWidgets.QPushButton(self.tab)
-        self.pushButton.setEnabled(False)
-        self.pushButton.setGeometry(QtCore.QRect(80, 10, 112, 32))
-        self.pushButton.setObjectName("pushButton")
-        self.tabWidget.addTab(self.tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 999, 22))
-        self.menuBar.setToolTipDuration(0)
         self.menuBar.setObjectName("menuBar")
         self.menuHelp = QtWidgets.QMenu(self.menuBar)
         self.menuHelp.setObjectName("menuHelp")
@@ -143,9 +161,8 @@ class Ui_MainWindow(object):
         self.actionLicense = QtWidgets.QAction(MainWindow)
         self.actionLicense.setObjectName("actionLicense")
         self.actionAdd_Files = QtWidgets.QAction(MainWindow)
-        self.actionAdd_Files.setCheckable(True)
-        self.actionAdd_Files.setChecked(False)
         self.actionAdd_Files.setObjectName("actionAdd_Files")
+        #self.actionAdd_Files.triggered.connect(self.showDialog())
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
         self.menuHelp.addAction(self.actionLicense)
@@ -164,11 +181,15 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'.AppleSystemUIFont\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#faf0f2;\">⬤</span><span style=\" color:#ee5262;\"> </span><span style=\" font-size:20pt; font-weight:600; color:#000000; vertical-align:sub;\">Combined     </span><span style=\" color:#ff9696;\">⬤</span><span style=\" color:#96ff96;\"> </span><span style=\" font-size:20pt; font-weight:600; color:#000000; vertical-align:sub;\">Model 1</span><span style=\" font-size:20pt; color:#000000; vertical-align:sub;\">      </span><span style=\" color:#96ff96;\">⬤</span><span style=\" font-size:20pt; color:#ee5262; vertical-align:sub;\"> </span><span style=\" font-size:20pt; font-weight:600; color:#000000; vertical-align:sub;\">Model 2     </span><span style=\" color:#9696ff;\">⬤</span><span style=\" color:#ee5262;\"> </span><span style=\" font-size:20pt; font-weight:600; color:#000000; vertical-align:sub;\">Model 3</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#000000; vertical-align:sub;\"><br /></p></body></html>"))
         self.push_extract_1.setText(_translate("MainWindow", "Extract Videos"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), _translate("MainWindow", "Original Videos"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Extracted Videos"))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Model"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
         self.menuView.setTitle(_translate("MainWindow", "View"))
@@ -177,7 +198,36 @@ class Ui_MainWindow(object):
         self.actionLicense.setText(_translate("MainWindow", "License"))
         self.actionAdd_Files.setText(_translate("MainWindow", "Add Files"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
-
+   
+    def draw_miniview(self,dir):
+        scene = QGraphicsScene(self)
+        image = self.show_miniview(dir)
+        #self.imgQ = ImageQt.ImageQt(image)
+        img = QImage(image.data,image.shape[1],image.shape[0],QImage.Format_RGB888)
+        pixMap =  QPixmap.fromImage(img)
+        item = QGraphicsPixmapItem(pixMap)
+        scene.addItem(item)
+        self.mini_view_1.setScene(scene)
+    
+    def show_miniview(self,dir):
+        f = cv2.VideoCapture(dir)
+        total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
+        frame_rate = f.get(cv2.CAP_PROP_FPS)
+        total_length = int(total_frames/frame_rate)
+        print('total frames:{}, frame_rate :{} '.format(total_frames,frame_rate))
+        print('total length:{} '.format(total_length))
+        print(f.get(cv2.CAP_PROP_POS_FRAMES))
+        # the size will be 80*80*11 (width 80, length 80, 11 images)
+        interval = int(total_frames/11)
+        frame_list = []
+        for i in range(0,11):
+            f_num = i*interval
+            f.set(cv2.CAP_PROP_POS_FRAMES,f_num)
+            ret,frame = f.read()
+            assert ret
+            frame_list.append(cv2.resize(frame,(81,81)))
+        frame_concat = cv2.hconcat(frame_list)
+        return frame_concat
 
 if __name__ == "__main__":
     import sys
