@@ -218,7 +218,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         scene = QGraphicsScene(self)
         image = self.show_miniview(dir)
         #self.imgQ = ImageQt.ImageQt(image)
-        print(image.shape[1],image.shape[0])
+        #print(image.shape[1],image.shape[0])
         img = QImage(image.data,image.shape[1],image.shape[0],QImage.Format_RGB888).rgbSwapped()
         pixMap =  QPixmap.fromImage(img)
         item = QGraphicsPixmapItem(pixMap)
@@ -233,7 +233,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         total_length = int(total_frames/frame_rate)
         print('total frames:{}, frame_rate :{} '.format(total_frames,frame_rate))
         print('total length:{} '.format(total_length))
-        print(f.get(cv2.CAP_PROP_POS_FRAMES))
+        #print(f.get(cv2.CAP_PROP_POS_FRAMES))
         # the size will be 80*80*11 (width 80, length 80, 11 images)
         interval = int(total_frames/11)
         frame_list = []
