@@ -56,6 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
+        self.ui.draw_miniview(os.getcwd()+'/test.mp4')
         self.ui.setupUi(self)
        
         #start
