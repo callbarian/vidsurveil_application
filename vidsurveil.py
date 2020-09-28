@@ -1,5 +1,6 @@
 import sys
 import os
+
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
@@ -11,9 +12,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtWidgets import QApplication
 '''
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
 from mainwindow import Ui_MainWindow
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -82,6 +82,59 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.ui.~~~
         self.ui.actionAdd_Files.triggered.connect(self.open_file)
         self.show()
+
+
+        #Adding Video Widget--------------------------#
+
+        self.mediaPlayer = QtMultimedia.QMediaPlayer(self)
+        self.mediaPlayer.setVideoOutput(self.ui.video_player)
+        #fileName = "/Users/chan/Desktop/Anomaly_Detection/app/vidsurveil_application/3.mp4"
+        #url = QtCore.QUrl.fromLocalFile(fileName)
+        url = QtCore.QUrl("http://clips.vorwaerts-gmbh.de/VfE_html5.mp4")
+        self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
+        self.mediaPlayer.play()
+
+        #videoWidget = QVideoWidget()
+        #layout = QVBoxLayout()
+        #self.viewer.setCentralWidget(videoWidget)
+        #self.player.setVideoOutput(videoWidget)
+
+        
+        #layout.addWidget(videoWidget)
+        #layout.addLayout(controlLayout)
+        #layout.addWidget(self.errorLabel)
+        #self.centralwidget = QtWidgets.QWidget(mainwindow)
+        #self.centralwidget.setObjectName("centralwidget")
+        #self.widget = QVideoWidget(self.centralwidget)
+        #self.widget.setGeometry(QtCore.QRect(20, 10, 241, 221))
+        #self.widget.setObjectName("widget")
+
+        #self.pause_button = QPushButton()
+        #self.pause_button.setEnabled(False)
+        #self.pause_button.clicked.connect(self.pause)
+
+        #self.ui.pause_button.mousePressEvent = self.pause
+        #self.ui.pauseButton.clicked.connect(self.pause)
+        self.ui.playButton.pressed.connect(self.play)
+        self.ui.pauseButton.pressed.connect(self.pause)
+        self.ui.stopButton.pressed.connect(self.stop)
+        self.ui.muteButton.pressed.connect(self.mute(switch=True))
+        self.ui.volumeButton.pressed.connect(self.mute(switch=False))
+
+        #Till here------------------------------------#
+
+    def pause(self):
+        self.mediaPlayer.pause()
+
+    def play(self):
+        self.mediaPlayer.play()
+
+    def stop(self):
+        self.mediaPlayer.stop()
+    
+    #Resume from here
+    def mute(self,switch=False):
+        self.mediaPlayer.setMuted(switch)
 
     def open_file(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileNames(self, "videos")
