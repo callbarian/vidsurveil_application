@@ -6,7 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5.QtMultimediaWidgets import QVideoWidget
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -254,8 +254,9 @@ class Ui_MainWindow(object):
         self.actionLicense.setText(_translate("MainWindow", "License"))
         self.actionAdd_Files.setText(_translate("MainWindow", "Add Files"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
+from PyQt5.QtMultimediaWidgets import QVideoWidget
 
-    
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

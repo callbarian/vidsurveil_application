@@ -1,6 +1,11 @@
 import sys
 import os
+#<<<<<<< HEAD
 
+#=======
+import cv2
+from miniview import Miniview
+#>>>>>>> 8b7e21e4060da98acf4aee3b5536a2a4c37b737d
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
@@ -57,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        
         self.path_name=[]
         #start
         self.player = QMediaPlayer()
@@ -118,8 +123,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.playButton.pressed.connect(self.play)
         self.ui.pauseButton.pressed.connect(self.pause)
         self.ui.stopButton.pressed.connect(self.stop)
-        self.ui.muteButton.pressed.connect(self.mute(switch=True))
-        self.ui.volumeButton.pressed.connect(self.mute(switch=False))
+        #self.ui.muteButton.pressed.connect(self.mute(switch=True))
+       #self.ui.volumeButton.pressed.connect(self.mute(switch=False))
 
         #Till here------------------------------------#
 
@@ -199,8 +204,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.playlistView.setCurrentIndex(ix)
             const=self.model.playlist.media(i)
             print(self.path_name[i])
-            self.ui.draw_miniview(self.path_name[i])
-
+            self.scene = Miniview().draw_miniview(self.path_name[i])
+            self.ui.mini_view_1.setScene(self.scene)
+            self.ui.mini_view_2.setScene(self.scene)
     def toggle_viewer(self, state):
         if state:
             self.viewer.show()
