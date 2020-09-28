@@ -147,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.playlistView.setCurrentIndex(ix)
             const=self.model.playlist.media(i)
             print(self.path_name[i])
-            self.ui.draw_miniview(self.path_name[i])
+            self.draw_miniview(self.path_name[i])
 
     def toggle_viewer(self, state):
         if state:
