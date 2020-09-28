@@ -93,11 +93,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.mediaPlayer = QtMultimedia.QMediaPlayer(self)
         self.mediaPlayer.setVideoOutput(self.ui.video_player)
-        #fileName = "/Users/chan/Desktop/Anomaly_Detection/app/vidsurveil_application/3.mp4"
-        #url = QtCore.QUrl.fromLocalFile(fileName)
-        url = QtCore.QUrl("http://clips.vorwaerts-gmbh.de/VfE_html5.mp4")
-        self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
-        self.mediaPlayer.play()
+        # fileName = "/Users/chan/Desktop/Anomaly_Detection/app/3.mp4"
+        # url = QtCore.QUrl.fromLocalFile(fileName)
+        # #url = QtCore.QUrl("http://clips.vorwaerts-gmbh.de/VfE_html5.mp4")
+        # self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
+        # self.mediaPlayer.play()
 
         #videoWidget = QVideoWidget()
         #layout = QVBoxLayout()
@@ -207,6 +207,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.scene = Miniview().draw_miniview(self.path_name[i])
             self.ui.mini_view_1.setScene(self.scene)
             self.ui.mini_view_2.setScene(self.scene)
+            fileName = self.path_name[i]
+            url = QtCore.QUrl.fromLocalFile(fileName)
+            self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
+            #self.mediaPlayer.play()
+
     def toggle_viewer(self, state):
         if state:
             self.viewer.show()
