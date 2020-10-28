@@ -13,7 +13,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtWidgets import QApplication
 '''
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
 from mainwindow import Ui_MainWindow
 
 from PyQt5.QtWidgets import *
@@ -78,12 +78,34 @@ class MainWindow(QtWidgets.QMainWindow):
         selection_model = self.ui.playlistView.selectionModel()
         selection_model.selectionChanged.connect(self.playlist_selection_changed)
 
-
-
         #print('@@@ui type is ',type(self.ui.actionAdd_Files))  
         #self.ui.~~~
         self.ui.actionAdd_Files.triggered.connect(self.open_file)
         self.show()
+
+        #Adding Video Widget--------------------------#
+
+        self.mediaPlayer = QtMultimedia.QMediaPlayer(self)
+        self.mediaPlayer.setVideoOutput(self.ui.video_player)
+        
+        self.ui.video_player.resize(420,210)
+        self.ui.playButton.pressed.connect(self.play)
+        self.ui.pauseButton.pressed.connect(self.pause)
+        self.ui.stopButton.pressed.connect(self.stop)
+        #Till here------------------------------------#
+        
+    def pause(self):
+        self.mediaPlayer.pause()
+
+    def play(self):
+        self.mediaPlayer.play()
+
+    def stop(self):
+        self.mediaPlayer.stop()
+    
+    #Resume from here
+    def mute(self,switch=False):
+        self.mediaPlayer.setMuted(switch)
 
     def open_file(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileNames(self, "videos")
@@ -148,9 +170,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.playlistView.setCurrentIndex(ix)
             const=self.model.playlist.media(i)
             print(self.path_name[i])
-            self.scene = Miniview().draw_miniview(self.path_name[i])
+            view = Miniview()
+            self.scene = view.draw_miniview(self.path_name[i])
             self.ui.mini_view_1.setScene(self.scene)
             self.ui.mini_view_2.setScene(self.scene)
+            time_line = view.cal_timeline(self.path_name[i])
+            print('time line: {}'.format(time_line))
+            self.ui.lcdNumber_1.display(str(int(time_line[0]/60))+':'+str(int(time_line[0]%60)))
+            self.ui.lcdNumber_2.display(str(int(time_line[1]/60))+':'+str(int(time_line[1]%60)))
+            self.ui.lcdNumber_4.display(str(int(time_line[2]/60))+':'+str(int(time_line[2]%60)))
+            self.ui.lcdNumber_5.display(str(int(time_line[3]/60))+':'+str(int(time_line[3]%60)))
+            self.ui.lcdNumber_6.display(str(int(time_line[4]/60))+':'+str(int(time_line[4]%60)))
+
+            fileName = self.path_name[i]
+            url = QtCore.QUrl.fromLocalFile(fileName)
+            self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
+            
+         
+
     def toggle_viewer(self, state):
         if state:
             self.viewer.show()

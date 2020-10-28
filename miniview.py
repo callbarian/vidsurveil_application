@@ -18,7 +18,20 @@ class Miniview():
         self.scene.addItem(item)
         return self.scene
         
-    
+    def cal_timeline(self,dir):
+        f = cv2.VideoCapture(dir)
+        total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
+        frame_rate = f.get(cv2.CAP_PROP_FPS)
+        total_length = int(total_frames/frame_rate)
+
+        time_list = []
+        time_interval =int(total_frames/4)
+        for i in range(0,4):
+            time_list.append(int(i*time_interval/frame_rate))
+        time_list.append(int(total_frames/frame_rate))
+
+        return time_list
+        
     def show_miniview(self,dir):
         f = cv2.VideoCapture(dir)
         total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -28,6 +41,7 @@ class Miniview():
         print('total length:{} '.format(total_length))
         #print(f.get(cv2.CAP_PROP_POS_FRAMES))
         # the size will be 80*80*11 (width 80, length 80, 11 images)
+
         interval = int(total_frames/11)
         frame_list = []
         for i in range(0,11):
