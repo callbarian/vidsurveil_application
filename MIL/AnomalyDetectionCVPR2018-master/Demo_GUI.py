@@ -293,7 +293,7 @@ class PrettyWidget():
         inputs = load_dataset_One_Video_Features(single_feature)
 
         cap = cv2.VideoCapture(single_video)
-        Total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        Total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         print('frames of this segment: {}'.format(Total_frames))
         
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
