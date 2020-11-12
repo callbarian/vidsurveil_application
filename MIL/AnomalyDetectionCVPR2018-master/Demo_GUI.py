@@ -257,7 +257,6 @@ class PrettyWidget():
                 elif file.split('.')[1] != 'mp4':   
                     continue
                 else:
-                    count_segments+=1
                     self.SingleBrowse(os.path.join(os.path.join(temp_dir,video,file)),total_frame_arr,anomalous_frames)
             anomaly_arr.append(anomalous_frames)
         
