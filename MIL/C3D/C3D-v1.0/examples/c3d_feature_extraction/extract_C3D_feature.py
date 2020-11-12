@@ -847,7 +847,7 @@ def main(file_path,video_file):
 if __name__ == '__main__':
     # path where all video directories are
     video_path = os.getcwd()+"/MIL/temp_dir"
-    
+    #video_path = '/home/callbarian/vidsurveil_application/MIL/temp_dir'
     if not os.path.exists(video_path):
       os.makedirs(video_path)
 
