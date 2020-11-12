@@ -294,7 +294,7 @@ class PrettyWidget():
 
         cap = cv2.VideoCapture(single_video)
         Total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        print('frames of this segment: {}'.format(Total_frames))
+        print('frames of this segment: {}\n'.format(Total_frames))
         
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
         total_segments = total_segments.round()
@@ -316,11 +316,11 @@ class PrettyWidget():
         
         scores = Frames_Score
         scores1=scores.reshape((scores.shape[1],))
-        print('len of score before savitzky golay: {}'.format(len(scores1)))
+        
         
        #print('len of scores before savitzky golay {}'.format(len(scores1)))
         scores1 = savitzky_golay(scores1, 101, 3)
-        print('len of scores after savitzky golay {}'.format(len(scores1)))
+        print('len of scores after savitzky golay {}\n'.format(len(scores1)))
         #savemat(save_path+file_name+'.mat',{'Score':scores1})
         #print("saving {}.mat".format(file_name))
         
