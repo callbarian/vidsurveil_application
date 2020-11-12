@@ -260,7 +260,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.treeView2_2.setAcceptDrops(True)
         self.treeView2_2.setObjectName("treeView2_2")
         self.run_mil_button = QtWidgets.QPushButton(self.tab)
-        self.run_mil_button.setEnabled(False)
+        self.run_mil_button.setEnabled(True)
         self.run_mil_button.setGeometry(QtCore.QRect(80, 10, 112, 32))
         self.run_mil_button.setObjectName("run_mil_button")
         self.tabWidget.addTab(self.tab, "")

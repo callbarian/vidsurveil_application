@@ -2,6 +2,7 @@ import sys
 import os
 import cv2
 from miniview import Miniview
+from MIL.Codes.mil import MIL
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
@@ -61,6 +62,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         
         self.path_name=[]
+
+        #where to save result videos
+        self.save_dir = os.getcwd()+'/save_dir'
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+        ##---------------MIL begin------------------##
+        # temporary directory to process files (MIL)
+        self.temp_dir_MIL = os.getcwd()+'/MIL/temp_dir'
+        if not os.path.exists(self.temp_dir_MIL):
+            os.makedirs(self.temp_dir_MIL)
+        
+        # environment for c3d
+        self.env_path_c3d = '/home/callbarian/bin/miniconda3/envs/c3d_py36/bin/python'
+        
+
+        # environment for MIL(AnomalyDetection)
+        self.env_path_mil = '/home/callbarian/bin/miniconda3/envs/Anomaly_py36/bin/python'
+
+        #run model
+        self.ui.run_mil_button.pressed.connect(self.run_mil)
+
+        ##---------------MIL end------------------##
+
         #start
         self.player = QMediaPlayer()
 
@@ -94,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.stopButton.pressed.connect(self.stop)
         #Till here------------------------------------#
         
+
     def pause(self):
         self.mediaPlayer.pause()
 
@@ -197,6 +223,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def erroralert(self, *args):
         print(args)
 
+    def run_mil(self):
+        assert self.path_name,'please select file first!'
+        MIL(self.path_name,self.temp_dir_MIL,self.save_dir,self.env_path_c3d,self.env_path_mil).preprocess()
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # window.show()
