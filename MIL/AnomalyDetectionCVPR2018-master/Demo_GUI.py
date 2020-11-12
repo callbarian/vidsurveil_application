@@ -299,7 +299,7 @@ class PrettyWidget():
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
         total_segments = total_segments.round()
         #inputs = np.reshape(inputs, (32, 4096))
-        pr  edictions = model.predict_on_batch(inputs)
+        predictions = model.predict_on_batch(inputs)
         
         
         #print("predictions: ",predictions)
