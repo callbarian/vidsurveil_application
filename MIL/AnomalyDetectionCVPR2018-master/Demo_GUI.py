@@ -49,7 +49,7 @@ total_frame=0
 time_series=[]
 final_time_series=[]
 
-def save_video(save_path,video_path,frame_list):
+def save_video(save_path,video_path,frame_list,fps):
     temp_path= save_path
     file_name = video_path.split('/')[-1]
     file_name = file_name.split('.')[0]
@@ -60,7 +60,6 @@ def save_video(save_path,video_path,frame_list):
     if not os.path.isdir(result_path):
         os.mkdir(result_path)
     '''
-    fps = 30
     print("frame_list : ",frame_list)
     print("video_path : "+video_path)
     
@@ -232,31 +231,40 @@ class PrettyWidget():
        # global score_function
        # score_function = Initialization_function.get_prediction_function()
 
-        global time_series
-        global total_frame
+        #global time_series
+        #global total_frame
          
-        time_series = []
-        #save_path = '/home/callbarian/C3D/saved_videos/'
-        #original_path = '/home/callbarian/C3D/moved_videos/'
-        #btn.resize(btn.sizeHint())
-        feature_path = os.getcwd()+'/Test/test'
-        gt_path = './Test/gt_test'
-        feature_list = sorted(os.listdir(feature_path))
-        gt_list = sorted(os.listdir(gt_path))
-        for feature,gt in zip(feature_list,gt_list):
-            #video_format = ''
-            #for file2 in os.listdir("/home/callbarian/C3D/videos/" + file):
-                #if(file2.split('.')[1] != 'txt'):
-                    #video_format = file2
-                #read_file = "/home/callbarian/C3D/videos/"+ file + "/" + file2  
-                single_feature = os.path.join(feature_path,feature)
-                single_gt = os.path.join(gt_path,gt)
-                self.SingleBrowse(single_feature,single_gt)
+        
+        
+        temp_dir = os.getcwd()+'/MIL/temp_dir'
+        #gt_path = './Test/gt_test'
+
+        video_dir = sorted(os.listdir(temp_dir))
+        #gt_list = sorted(os.listdir(gt_path))
+        
+        # array of anomalous frames for all videos
+        anomaly_arr = []
+        for video in video_dir:
+            # for each original videos, process and retrieve anamolous frames
+            files = sorted(os.listdir(os.path.join(temp_dir,video)))
+            total_frame_arr = [] # count how many segments to analyze
+            total_frame_arr.append(0) # initialize as 0
+            anomalous_frames = [] # array for anomalous_frames
+            for file in files:
+                original_path = ""
+                if file.split('.')[0] == video:
+                    original_path = os.path.join(os.path.join(temp_dir,video,file)) 
+                elif file.split('.')[1] != 'mp4':   
+                    continue
+                else:
+                    count_segments+=1
+                    self.SingleBrowse(os.path.join(os.path.join(temp_dir,video,file)),total_frame_arr,anomalous_frames)
+            anomaly_arr.append(anomalous_frames)
+        
+        np.save(os.getcwd()+'/MIL/MIL_anomalous.npy',np.array(anomaly_arr))
                 #btn.move(150, 200)
                 #self.show() #uncomment if want to pop up the GUI Window
-           # video_format = '.' + video_format.split('.')[1]    
-            #print("video format : " + video_format)
-            #video_path = original_path + file + video_format   
+            
             #save_video(save_path,video_path,time_series)
             #print(time_series)
             #time_series = []
@@ -264,7 +272,7 @@ class PrettyWidget():
         #time_series=time_merge.time_stamp(total_frame,time_series)
         #print("time series : ",time_series)
         
-       #save_video(save_path,time_series)
+       
        # btn.clicked.connect(self.SingleBrowse)
        # btn.move(150, 200)
        #  self.show()
@@ -272,43 +280,32 @@ class PrettyWidget():
 
 
 
+    def SingleBrowse(self,single_video,total_frame_arr,anomalous_frames):
 
+        # where to save result videos(anomalous videos)
+        save_path = os.getcwd()+'/save_dir'
 
-
-    def SingleBrowse(self,single_feature,single_gt):
-        global total_frame
-        #verify_path = video_path[-4:]
-        #print(verify_path)
-        #if(verify_path==".txt"):
-        #        print("skipping.........................")
-        #        return
-        #print(video_path)
-        #cap = cv2.VideoCapture(video_path)
-        #Total_frames = cap.get(cv2.CV_CAP_PROP_FRAME_COUNT)
-        #print(cv2)
-        #FeaturePath=(video_path)
-        file_name = single_feature[0:-4]
-        file_name = file_name.split('/')[-1]
-
-        root_feature_path = './Test/test'
-        save_path = './Model_Res/'
         if not os.path.exists(save_path):
-            os.makedirs(save_path)        
-        #Feature_name = FeaturePath.split('/')[-1]
-        #FeaturePath = root_feature_path + Feature_name + '.txt'
+            os.makedirs(save_path) 
+
+        single_feature = single_video.split('.')[0] + '.txt'
+       
+       
         inputs = load_dataset_One_Video_Features(single_feature)
-        #Total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        gt_data = np.load(single_gt)
-        Total_frames = len(gt_data)
+
+        cap = cv2.VideoCapture(single_video)
+        Total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        print('frames of this segment: {}'.format(Total_frames))
+        
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
         total_segments = total_segments.round()
         #inputs = np.reshape(inputs, (32, 4096))
         predictions = model.predict_on_batch(inputs)
         
-        #print("line 288. predictions: {}, inputs: {}, total_segnments".format(len(predictions),len(inputs),len(total_segments)))
+        
         #print("predictions: ",predictions)
         Frames_Score = []
-        count = -1;
+        count = -1
         for iv in range(0, len(inputs)):
             F_Score = np.matlib.repmat(predictions[iv],1,(int(total_segments[iv+1])-int(total_segments[iv])))
             count = count + 1
@@ -319,22 +316,15 @@ class PrettyWidget():
         
         scores = Frames_Score
         scores1=scores.reshape((scores.shape[1],))
-        print('len of gt: ',len(gt_data))
+        
        #print('len of scores before savitzky golay {}'.format(len(scores1)))
         scores1 = savitzky_golay(scores1, 101, 3)
         print('len of scores after savitzky golay {}'.format(len(scores1)))
-        savemat(save_path+file_name+'.mat',{'Score':scores1})
-        print("saving {}.mat".format(file_name))
+        #savemat(save_path+file_name+'.mat',{'Score':scores1})
+        #print("saving {}.mat".format(file_name))
         
-        '''
-        cap = cv2.VideoCapture((video_path))
-        while not cap.isOpened():
-            cap = cv2.VideoCapture((video_path))
-            cv2.waitKey(1000)
-            print ("Wait for the header")
 
         pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-        Total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
         print ("Anomaly Prediction")
         x = np.linspace(1, Total_frames, Total_frames)
@@ -344,67 +334,26 @@ class PrettyWidget():
         plt.close()
         break_pt=min(scores1.shape[0], x.shape[0])
         plt.axis([0, Total_frames, 0, 1])
-        i=0;
-        
-        Anomaly_Detected = 0
-        flag = Total_frames
-        print(Total_frames)
-        #temp,flag,anomaly_start,anomaly_finish  is list of the frame that present the anomaly
+
+        #anomaly_start,anomaly_finish is the beginning and the end frame that present the anomaly
         flag_of_frame=0
         anomaly_start=0
         anomaly_finish=0
-        temp=[]
-        while True:
-            #flag, frame = cap.read()
-            flag = flag - 1
-            #print(flag)
-            if flag>0:
-                i = i + 1
-                #cv2.imshow('video', frame)
-               
-                sensitivity=0.4
-                #if the score >=0.4, we append the frame number of the video to the list temp.
-                if scores1[i-1]>=sensitivity and flag_of_frame==0:
-                    flag_of_frame=1
-                    anomaly_start=i-1+total_frame
-                if scores1[i-1]<=sensitivity and flag_of_frame==1:
-                    flag_of_frame=0
-                    anomaly_finish=i-1+total_frame
-                    time_series.append([int(anomaly_start),int(anomaly_finish)])
-                
+        for i in range(Total_frames):
+            sensitivity=0.4
+            #if the score >=0.4, we append the frame number of the video to the list temp.
+            if scores1[i]>=sensitivity and flag_of_frame==0:
+                flag_of_frame = 1
+                anomaly_start = sum(total_frame_arr) + i
+                print('anomaly found! begining frame: {}'.format(anomaly_start))
+            if scores1[i]<=sensitivity and flag_of_frame==1:
+                flag_of_frame = 0
+                anomaly_finish = sum(total_frame_arr) + i
+                print('anomaly ended! end frame: {}'.format(anomaly_finish))
+                # append anomalous frames
+                anomalous_frames.append([anomaly_start,anomaly_finish])
 
-                jj=i%25
-                if jj==1:
-                    #if i>1:
-                        #print(scores1[i-25:i])
-                    plt.plot(x[:i], scores1[:i], color='g',marker="o",ms=5,mec="g",mfc="g", linewidth=3)
-                    plt.draw()
-                    plt.pause(0.000000000000000000000001)
-
-                #pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-                #print (str(pos_frame) + " frames")
-            else:
-                # The next frame is not ready, so we try to read it again
-                pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-                cap.set(cv2.CAP_PROP_POS_FRAMES, pos_frame - 1)
-                print("frame is not ready")
-                # It is better to wait for a while for the next frame to be ready
-                cv2.waitKey(1000)
-            if flag<0:
-                break
-            if cv2.waitKey(10) == 27:
-                break
-            if cap.get(cv2.CAP_PROP_POS_FRAMES)== break_pt:
-                #cap.get(cv2.CAP_PROP_FRAME_COUNT):
-                # If the number of captured frames is equal to the total number of frames,
-                # we stop
-                break
-
-        
-        total_frame+=i
-        print(time_series)
-        print("total frame : ", total_frame)
-        '''
+    
         
 def main():
     #app = QtWidgets.QApplication(sys.argv)
@@ -414,13 +363,3 @@ def main():
 
 main()
 
-'''
-                if(scores1[i-1]>0.4):
-                    #print("Anomaly Detected......")
-                    Anomaly_Detected = Anomaly_Detected + 1
-                    #print("Anomaly Detected: "+ str(Anomaly_Detected))
-                    if(Anomaly_Detected==1):
-                        os.popen('cp '+ video_path + ' /home/callbarian/C3D/saved_videos/')
-                        print("Anomaly Detected.........")
-
-'''
