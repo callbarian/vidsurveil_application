@@ -26,7 +26,7 @@ class MIL():
         self.c3d_path = os.getcwd()+'/MIL/C3D/C3D-v1.0/examples/c3d_feature_extraction/extract_C3D_feature.py'
 
         # mil path
-        self.mil_path = os.getcwd()+'MIL/AnomalyDetectionCVPR2018-master/Demo_GUI.py'
+        self.mil_path = os.getcwd()+'/MIL/AnomalyDetectionCVPR2018-master/Demo_GUI.py'
 
     def preprocess(self):
         for file in self.path_name:
