@@ -298,6 +298,7 @@ class PrettyWidget():
         
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
         total_segments = total_segments.round()
+        total_segments[-1] = total_segments[-1]+1
         #inputs = np.reshape(inputs, (32, 4096))
         predictions = model.predict_on_batch(inputs)
         
@@ -315,7 +316,7 @@ class PrettyWidget():
         
         scores = Frames_Score
         scores1=scores.reshape((scores.shape[1],))
-        print('len of score before savitzky golay: {}'.format(scores1))
+        print('len of score before savitzky golay: {}'.format(len(scores1)))
         
        #print('len of scores before savitzky golay {}'.format(len(scores1)))
         scores1 = savitzky_golay(scores1, 101, 3)
