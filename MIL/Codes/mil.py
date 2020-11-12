@@ -25,6 +25,9 @@ class MIL():
         # c3d path
         self.c3d_path = os.getcwd()+'/MIL/C3D/C3D-v1.0/examples/c3d_feature_extraction/extract_C3D_feature.py'
 
+        # mil path
+        self.mil_path = os.getcwd()+'MIL/AnomalyDetectionCVPR2018-master/Demo_GUI.py'
+
     def preprocess(self):
         for file in self.path_name:
             assert file.split('.')[-1]=='mp4','the file has to be in mp4 format'
@@ -56,9 +59,14 @@ class MIL():
             print(out)
 
     
-    def run_c3d(self):
-
+    def run_C3D(self):
         result = subprocess.Popen(['sh',os.getcwd()+'/MIL/Codes/call_environment.sh',self.env_path_c3d,self.c3d_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result.wait()
+        out = result.communicate()
+        print(out)
+
+    def run_MIL(self):
+        result = subprocess.Popen(['sh',os.getcwd()+'/MIL/Codes/call_environment.sh',self.env_path_mil,self.mil_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)
