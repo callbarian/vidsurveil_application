@@ -23,7 +23,7 @@ class MIL():
         self.env_path_mil = env_path_mil
 
         # c3d path
-        self.c3d_path = os.getcwd()+'/../C3D/C3D-v1.0/examples/c3d_feature_extraction/extract_C3D_feature.py'
+        self.c3d_path = os.getcwd()+'/MIL/C3D/C3D-v1.0/examples/c3d_feature_extraction/extract_C3D_feature.py'
 
     def preprocess(self):
         for file in self.path_name:
@@ -33,7 +33,13 @@ class MIL():
             save_path = os.path.join(self.temp_dir,file_name.split('.')[0])
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
+            
+            self.temp_dir_arr.append(save_path)
 
+            # if file already exist in save_path, continue
+            if os.path.exists(os.path.join(save_path,file_name)):
+                continue
+            
             # copy each file to each new directory, after resizing it
             command = 'ffmpeg -i ' + file + ' -filter:v scale="360:trunc(ow/a/2)*2" -c:a copy ' + os.path.join(save_path,file_name)
             result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
@@ -49,11 +55,10 @@ class MIL():
             out = result.communicate()
             print(out)
 
-            self.temp_dir_arr.append(save_path)
     
-    def run_c3d():
+    def run_c3d(self):
 
-        result = subprocess.Popen(['sh',os.getcwd()+'/MIL/Codes/call_environment.sh',self.env_path_c3d,self.c3d_path],shell=True,stderr=subprocess.PIPE)
+        result = subprocess.Popen(['sh',os.getcwd()+'/MIL/Codes/call_environment.sh',self.env_path_c3d,self.c3d_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)
