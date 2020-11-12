@@ -218,7 +218,7 @@ class PrettyWidget():
         #self.setWindowTitle('Anomaly Detection')
         #btn = QtWidgets.QPushButton('ANOMALY DETECTION SYSTEM \n Please select video', self)
 
-        Model_dir = os.getcwd()
+        Model_dir = os.getcwd()+'/MIL/AnomalyDetectionCVPR2018-master'
         weights_path = Model_dir + '/weights_L1L2.mat'
         model_path = Model_dir + '/model.json'
         ########################################
