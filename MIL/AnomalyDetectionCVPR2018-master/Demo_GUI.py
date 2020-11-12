@@ -299,7 +299,7 @@ class PrettyWidget():
         total_segments = np.linspace(1, Total_frames, num=len(inputs)+1)
         total_segments = total_segments.round()
         #inputs = np.reshape(inputs, (32, 4096))
-        predictions = model.predict_on_batch(inputs)
+        pr  edictions = model.predict_on_batch(inputs)
         
         
         #print("predictions: ",predictions)
@@ -315,6 +315,7 @@ class PrettyWidget():
         
         scores = Frames_Score
         scores1=scores.reshape((scores.shape[1],))
+        print('len of score before savitzky golay: {}'.format(scores1))
         
        #print('len of scores before savitzky golay {}'.format(len(scores1)))
         scores1 = savitzky_golay(scores1, 101, 3)
@@ -322,7 +323,7 @@ class PrettyWidget():
         #savemat(save_path+file_name+'.mat',{'Score':scores1})
         #print("saving {}.mat".format(file_name))
         
-
+        '''
         pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
 
         print ("Anomaly Prediction")
@@ -333,6 +334,7 @@ class PrettyWidget():
         plt.close()
         break_pt=min(scores1.shape[0], x.shape[0])
         plt.axis([0, Total_frames, 0, 1])
+        '''
 
         #anomaly_start,anomaly_finish is the beginning and the end frame that present the anomaly
         flag_of_frame=0
