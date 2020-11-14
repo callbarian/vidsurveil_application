@@ -219,6 +219,7 @@ class PrettyWidget():
         #btn = QtWidgets.QPushButton('ANOMALY DETECTION SYSTEM \n Please select video', self)
 
         Model_dir = os.getcwd()+'/MIL/AnomalyDetectionCVPR2018-master'
+        #Model_dir = os.getcwd()
         weights_path = Model_dir + '/weights_L1L2.mat'
         model_path = Model_dir + '/model.json'
         ########################################
@@ -237,6 +238,7 @@ class PrettyWidget():
         
         
         temp_dir = os.getcwd()+'/MIL/temp_dir'
+        #temp_dir = '/home/callbarian/vidsurveil_application/MIL/temp_dir'
         #gt_path = './Test/gt_test'
 
         video_dir = sorted(os.listdir(temp_dir))
@@ -342,7 +344,7 @@ class PrettyWidget():
         anomaly_start=0
         anomaly_finish=0
         for i in range(Total_frames):
-            sensitivity=0.4
+            sensitivity=0.1
             #if the score >=0.4, we append the frame number of the video to the list temp.
             if scores1[i]>=sensitivity and flag_of_frame==0:
                 flag_of_frame = 1

@@ -227,8 +227,8 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self.path_name,'please select file first!'
         mil = MIL(self.path_name,self.temp_dir_MIL,self.save_dir,self.env_path_c3d,self.env_path_mil)
         mil.preprocess()
-        mil.run_C3D()
-        mil.run_MIL()
+        #mil.run_C3D()
+        #mil.run_MIL()
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
