@@ -12,6 +12,7 @@ import array
 import cv2
 import shutil
 import errno
+import time
 
 ###################################################################
 # Point to the C3D directory
@@ -21,7 +22,7 @@ caffe_root = os.path.abspath(os.path.join(
         ))
 
 # GPU to use
-gpu_id = 0
+gpu_id = 1
 
 # 50 should be good for 6GB VRAM. Decrease as needed
 batch_size = 50
@@ -662,7 +663,7 @@ def main(file_path,video_file):
     check_trained_model(trained_model)
 
     # save extracted frames temporarily
-    tmp_dir = os.getcwd()+"/MIL/C3D/temp"
+    tmp_dir = os.getcwd()+'/MIL/C3D/temp'
     if not os.path.exists(tmp_dir):
       os.makedirs(tmp_dir)
 
@@ -709,9 +710,9 @@ def main(file_path,video_file):
             )
 
     # generate auxilliary files for C3D feature extraction
-    input_file = os.path.join(tmp_dir, 'input.txt')
-    output_prefix_file = os.path.join(tmp_dir, 'output_prefix.txt')
-    feature_prototxt = os.path.join(tmp_dir, 'feature_extraction.prototxt')
+    input_file = os.path.join(tmp_dir, video_file.split('.')[0]+'input.txt')
+    output_prefix_file = os.path.join(tmp_dir, video_file.split('.')[0]+'output_prefix.txt')
+    feature_prototxt = os.path.join(tmp_dir,video_file.split('.')[0]+'feature_extraction.prototxt')
     if not os.path.exists(tmp_dir):
         os.mkdir(tmp_dir)
     generate_feature_prototxt(feature_prototxt, input_file)
@@ -858,13 +859,15 @@ if __name__ == '__main__':
         
         #skip original videos
         if file.split('.')[0] == video_dir or file.split('.')[1] != 'mp4':
-          print('skipping'.format(file))
+          print('skipping '.format(file))
           continue
 
         # process each video segments
         main(os.path.join(video_path,video_dir),file)
 
         count+=1
+        if count%4==0:
+            time.sleep(5)
       print('processed {} segments for {} '.format(count,video_dir))
  
       
