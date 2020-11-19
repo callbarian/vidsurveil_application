@@ -344,7 +344,7 @@ class PrettyWidget():
         anomaly_start=0
         anomaly_finish=0
         for i in range(Total_frames):
-            sensitivity=0.1
+            sensitivity=0.4
             #if the score >=0.4, we append the frame number of the video to the list temp.
             if scores1[i]>=sensitivity and flag_of_frame==0:
                 flag_of_frame = 1
@@ -356,7 +356,8 @@ class PrettyWidget():
                 print('anomaly ended! end frame: {}'.format(anomaly_finish))
                 # append anomalous frames
                 anomalous_frames.append([anomaly_start,anomaly_finish])
-
+       
+        total_frame_arr.append(Total_frames)
     
         
 def main():
