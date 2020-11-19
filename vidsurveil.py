@@ -119,6 +119,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.stopButton.pressed.connect(self.stop)
         #Till here------------------------------------#
         
+        # save video
+        self.ui.push_extract_1.pressed.connect(self.extract_video)
 
     def pause(self):
         self.mediaPlayer.pause()
@@ -230,6 +232,27 @@ class MainWindow(QtWidgets.QMainWindow):
         mil.run_C3D()
         mil.run_MIL()
         
+    def extract_video(self):
+        videos = sorted(os.listdir(self.save_dir))
+        for video in videos:
+            npy_dict = {}
+            files = sorted(os.listdir(os.path.join(self.save_dir,video)))
+            for file in files:
+                if file =='.DS_Store':
+                    continue
+                elif file.split('.')[1]=='.mp4':
+                    print('Skipping already extracted videos {}'.format(file))
+                elif file.split('.')[1]=='.npy':
+                    x = np.load(os.path.join(self.save_dir,video,file))
+                    if file.split('_')[0]=='MIL':
+                        npy_dict{'MIL'} = x
+                    
+                    elif file.split('_')[0]=='FF':
+                        npy_dict{'FF'} = x                             
+                    elif file.split('_')[0]=='MNAD':
+                        npy_dict{'MNAD'} = x
+                
+            integrate =
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # window.show()
