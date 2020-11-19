@@ -3,6 +3,8 @@ import os
 import cv2
 from miniview import Miniview
 from MIL.Codes.mil2 import MIL
+import numpy as np
+import subprocess 
 '''
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
@@ -62,6 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         
         self.path_name=[]
+        self.curr_fileName=''
 
         #where to save result videos
         self.save_dir = os.getcwd()+'/save_dir'
@@ -210,8 +213,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.lcdNumber_5.display(str(int(time_line[3]/60))+':'+str(int(time_line[3]%60)))
             self.ui.lcdNumber_6.display(str(int(time_line[4]/60))+':'+str(int(time_line[4]%60)))
 
-            fileName = self.path_name[i]
-            url = QtCore.QUrl.fromLocalFile(fileName)
+            self.curr_fileName = self.path_name[i]
+            url = QtCore.QUrl.fromLocalFile(self.curr_fileName)
             self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
             
          
@@ -233,26 +236,77 @@ class MainWindow(QtWidgets.QMainWindow):
         mil.run_MIL()
         
     def extract_video(self):
-        videos = sorted(os.listdir(self.save_dir))
-        for video in videos:
-            npy_dict = {}
-            files = sorted(os.listdir(os.path.join(self.save_dir,video)))
-            for file in files:
-                if file =='.DS_Store':
-                    continue
-                elif file.split('.')[1]=='.mp4':
-                    print('Skipping already extracted videos {}'.format(file))
-                elif file.split('.')[1]=='.npy':
-                    x = np.load(os.path.join(self.save_dir,video,file))
-                    if file.split('_')[0]=='MIL':
-                        npy_dict{'MIL'} = x
-                    
-                    elif file.split('_')[0]=='FF':
-                        npy_dict{'FF'} = x                             
-                    elif file.split('_')[0]=='MNAD':
-                        npy_dict{'MNAD'} = x
-                
-            integrate =
+        #Extract(self.save_dir,self.curr_fileName)
+        video = self.curr_fileName.split('/')[-1].split('.')[0]
+        assert os.path.exists(os.path.join(self.save_dir,video)),'folder to save input folder was not created, means no anomalous event was detected'
+        npy_dict = {}
+        npy_merge = []
+        files = sorted(os.listdir(os.path.join(self.save_dir,video)))
+        for file in files:
+            if file =='.DS_Store':
+                continue
+            elif file.split('.')[1]=='mp4':
+                print('Skipping already extracted videos {}'.format(file))
+            elif file.split('.')[1]=='npy':
+                x = np.load(os.path.join(self.save_dir,video,file))
+                if file.split('_')[0]=='MIL':
+                    npy_dict['MIL'] = x                   
+                elif file.split('_')[0]=='FF':
+                    npy_dict['FF'] = x                             
+                elif file.split('_')[0]=='MNAD':
+                    npy_dict['MNAD'] = x
+
+                if not np.any(npy_merge):
+                    #print('first merge')
+                    npy_merge = x
+                else:
+                    print('+1')
+                    npy_merge = np.vstack([npy_merge,x])
+        npy_merge = npy_merge.reshape(-1,2)
+        sorted_index = np.argsort(npy_merge,axis=0)[:,0]
+        npy_merge = npy_merge[sorted_index]
+        print(npy_merge.shape,'\n',npy_merge)
+        
+        # find fps
+        result = subprocess.Popen(['ffprobe','-v','error','-select_streams','v','-of','default=noprint_wrappers=1:nokey=1','-show_entries','stream=r_frame_rate',self.curr_fileName],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result.wait()
+        out = result.communicate()
+        message = out[0].decode()
+        message = message.split('\n')[0]
+        fps = int(message.split('/')[0])/int(message.split('/')[1])
+        print('fps: ',fps)
+        # initial start and end frame
+        final_time = []
+        start_frame = npy_merge[0,0]
+        end_frame = npy_merge[0,1]
+
+        added_frame = 0
+        for i in range(1,len(npy_merge)):
+            if (npy_merge[i,0] - start_frame)  > (500+added_frame):
+                # if the difference of start frames are more than 
+                #    500 frames, then they are regarded as independent(different) incidents
+                final_time.append([start_frame,end_frame])
+                start_frame = npy_merge[i,0]
+                end_frame = npy_merge[i,1]
+
+                # reset added_frame 
+                added_frame = 0
+            # the most inclusive end frame to include as many incidents(frames)
+            elif npy_merge[i,1] > end_frame:
+                end_frame = npy_merge[i,1]
+                added_frame += npy_merge[i,0]-npy_merge[i-1,0]
+            # add frame to allow including consecutive events.    
+            print('start frame: {}, end frame: {}, added_frame: {},total_frame: {}'.format(start_frame,end_frame,added_frame,final_time))
+        final_time.append([start_frame,end_frame])
+        final_time = np.array(final_time)
+        print('final_time for {} is {}'.format(video,final_time))
+        for i, frames in enumerate(final_time):
+            print(final_time[i,0]/fps,final_time[i,1]/fps)
+            command = 'ffmpeg -ss ' + str(final_time[i,0]/fps)+ ' -i '+ self.curr_fileName + ' -to '+str((final_time[i,1]-final_time[i,0])/fps) + ' -c copy '+os.path.join(self.save_dir,video,video+'_extracted'+str(i)+'.mp4')
+            result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
+            result.wait()
+            out = result.communicate()
+            print(out)
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # window.show()

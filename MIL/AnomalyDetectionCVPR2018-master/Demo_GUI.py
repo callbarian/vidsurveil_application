@@ -262,10 +262,10 @@ class PrettyWidget():
                     self.SingleBrowse(os.path.join(os.path.join(temp_dir,video,file)),total_frame_arr,anomalous_frames)
             anomaly_arr.append(anomalous_frames)
         
-            if anomaly_arr:
+            if np.any(anomaly_arr):
                 save_dir = os.getcwd()+'/save_dir/'+video
                 os.makedirs(save_dir)
-                np.save(save_dir+'/MIL_'+ideo+'.npy',np.array(anomaly_arr))
+                np.save(save_dir+'/MIL_'+video+'.npy',np.array(anomaly_arr))
                 #btn.move(150, 200)
                 #self.show() #uncomment if want to pop up the GUI Window
             
