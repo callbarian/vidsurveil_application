@@ -64,7 +64,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         
         self.path_name=[]
+
+        # to handle extraction of each file
         self.curr_fileName=''
+        
+        # for time line
+        self.npy_dict = {}
 
         #where to save result videos
         self.save_dir = os.getcwd()+'/save_dir'
@@ -124,6 +129,9 @@ class MainWindow(QtWidgets.QMainWindow):
         
         # save video
         self.ui.push_extract_1.pressed.connect(self.extract_video)
+        
+        # show anomalous timeline
+        self.ui.push_extract_2.pressed.connect(self.show_timeline)
 
     def pause(self):
         self.mediaPlayer.pause()
@@ -235,6 +243,35 @@ class MainWindow(QtWidgets.QMainWindow):
         mil.run_C3D()
         mil.run_MIL()
         
+    def show_timeline(self):
+        video = self.curr_fileName.split('/')[-1].split('.')[0]
+        assert os.path.exists(os.path.join(self.save_dir,video)),'folder to save input folder was not created, means no anomalous event was detected'
+        
+        f = cv2.VideoCapture(self.curr_fileName)
+        total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
+        
+        self.npy_dict = {}
+        files = sorted(os.listdir(os.path.join(self.save_dir,video)))
+        min_view = Miniview()
+
+        for file in files:
+            if file =='.DS_Store':
+                continue
+            elif file.split('.')[1]=='mp4':
+                continue
+            elif file.split('.')[1]=='npy':
+                x = np.load(os.path.join(self.save_dir,video,file))
+                if file.split('_')[0]=='MIL':
+                    scene_MIL = min_view.draw_anomalous_time(x,total_frames) 
+                    self.ui.timeline_2.setScene(scene_MIL)          
+                elif file.split('_')[0]=='FF':
+                    scene_FF = min_view.draw_anomalous_time(x,total_frames) 
+                    self.ui.timeline_3.setScene(scene_FF)                          
+                elif file.split('_')[0]=='MNAD':
+                    scene_MNAD = min_view.draw_anomalous_time(x,total_frames) 
+                    self.ui.timeline_4.setScene(scene_MNAD) 
+        
+                 
     def extract_video(self):
         #Extract(self.save_dir,self.curr_fileName)
         video = self.curr_fileName.split('/')[-1].split('.')[0]
@@ -249,13 +286,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 print('Skipping already extracted videos {}'.format(file))
             elif file.split('.')[1]=='npy':
                 x = np.load(os.path.join(self.save_dir,video,file))
-                if file.split('_')[0]=='MIL':
-                    npy_dict['MIL'] = x                   
-                elif file.split('_')[0]=='FF':
-                    npy_dict['FF'] = x                             
-                elif file.split('_')[0]=='MNAD':
-                    npy_dict['MNAD'] = x
-
                 if not np.any(npy_merge):
                     #print('first merge')
                     npy_merge = x

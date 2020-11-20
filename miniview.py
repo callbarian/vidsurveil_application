@@ -2,12 +2,25 @@ import os
 import cv2
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-
-
+from PyQt5.QtGui import QPen, QBrush
+from PyQt5.Qt import Qt
+from PyQt5 import QtCore
 
 class Miniview():
     def __init__(self):
         self.scene = QGraphicsScene()
+    def draw_anomalous_time(self,time_frame,total_frames):
+        time_frame = time_frame.reshape(-1,2)
+        #self.scene.setSceneRect(0,0,894,24)
+        
+        self.scene.addRect(int(886*time_frame[0,0]/total_frames),0,int(886*(time_frame[0,1]-time_frame[0,0])/total_frames),20,QPen(Qt.red),QBrush(Qt.red))
+        
+        #for i,time in enumerate(time_frame):
+            
+            # the length of timeline container is 894
+            #self.scene.addRect(int(1000*time[0]/total_frames),0,int(1000*(time[1]-time[0])/total_frames),20,QPen(Qt.red),QBrush(Qt.red))
+        return self.scene
+
     def draw_miniview(self,dir):
         image = self.show_miniview(dir)
         #self.imgQ = ImageQt.ImageQt(image)

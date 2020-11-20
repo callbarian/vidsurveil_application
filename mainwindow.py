@@ -143,7 +143,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.mini_viewer.setFrameShadow(QtWidgets.QFrame.Raised)
         self.mini_viewer.setObjectName("mini_viewer")
         self.timeline_1 = QtWidgets.QGraphicsView(self.mini_viewer)
-        self.timeline_1.setGeometry(QtCore.QRect(47, 77, 894, 24))
+        self.timeline_1.setGeometry(QtCore.QRect(47, 77, 886, 24))
         self.timeline_1.setStyleSheet("border-style: solid;\n"
                                         "border-width: 3px;\n"
                                         "border-color: rgb(250, 240, 242);")
@@ -169,6 +169,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                                         "border-width: 3px;\n"
                                         "border-color: rgb(146, 130, 229);")
         self.mini_view_2.setObjectName("mini_view_2")
+
+        # a button to extract videos
         self.push_extract_1 = QtWidgets.QPushButton(self.mini_viewer)
         self.push_extract_1.setGeometry(QtCore.QRect(40, 20, 141, 31))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -178,6 +180,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.push_extract_1.setSizePolicy(sizePolicy)
         self.push_extract_1.setStyleSheet("")
         self.push_extract_1.setObjectName("push_extract_1")
+
+        # a button for displaying anomalous time line
+        self.push_extract_2 = QtWidgets.QPushButton(self.mini_viewer)
+        self.push_extract_2.setGeometry(QtCore.QRect(200, 20, 141, 31))
+        self.push_extract_2.setSizePolicy(sizePolicy)
+        self.push_extract_2.setStyleSheet("")
+        self.push_extract_2.setObjectName("push_extract_2")
+
         self.timeline_3 = QtWidgets.QGraphicsView(self.mini_viewer)
         self.timeline_3.setGeometry(QtCore.QRect(47, 252, 886, 24))
         self.timeline_3.setStyleSheet("border-style: solid;\n"
@@ -313,6 +323,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.current_time_label.setText(_translate("MainWindow", "0:00"))
         self.time_left_label.setText(_translate("MainWindow", "0:00"))
         self.push_extract_1.setText(_translate("MainWindow", "Extract Videos"))
+        self.push_extract_2.setText(_translate("MainWindow", "Show Anomalous Time"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), _translate("MainWindow", "Original Videos"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Extracted Videos"))
         self.run_mil_button.setText(_translate("MainWindow", "Run MIL"))
