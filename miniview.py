@@ -51,7 +51,7 @@ class Miniview():
                 if(i==len(time_frame)-1):
                     if end_frame<total_frames:
                         white_start_frame = end_frame + 1 # start frame for the last white space
-                        white_end_frame = 880    # last frame, 800(total_frames/total_frames) -> 800
+                        white_end_frame = 880    # last frame, int(880*(total_frames/total_frames)) -> 880
                         # white is [255,255,255] but rgbwill be swapped
                         mat[:18,white_start_frame:white_end_frame,:] = 255
                     
