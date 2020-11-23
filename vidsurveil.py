@@ -326,6 +326,7 @@ class MainWindow(QtWidgets.QMainWindow):
             result.wait()
             out = result.communicate()
             print(out)
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # window.show()

@@ -31,7 +31,7 @@ class Miniview():
                 if time[0]>0:
                     # draw white for previous frame if first start_frame is bigger than 0
                     mat[:18,0:start_frame-1,:] = 255
-                
+                         
             else:
                 # the length of timeline container is 894
                 start_frame = int(880*time[0]/total_frames)
@@ -42,10 +42,19 @@ class Miniview():
                     mat[:18,start_frame:end_frame+1,j] = pixel
                 
                 # draw white for previous empty timeline
-                end_frame = int(880*time_frame[i-1,1]/total_frames) + 1 # previous end frame +1
-                start_frame = int(880*time[0]/total_frames) - 1 # current start frame -1
+                white_start_frame = int(880*time_frame[i-1,1]/total_frames) + 1 # previous end frame +1
+                white_end_frame = int(880*time[0]/total_frames) - 1 # current start frame -1
                 # white is [255,255,255] but rgbwill be swapped
-                mat[:18,end_frame:start_frame,:] = 255
+                mat[:18,white_start_frame:white_end_frame,:] = 255
+
+                # if this is the last time set 
+                if(i==len(time_frame)-1):
+                    if end_frame<total_frames:
+                        white_start_frame = end_frame + 1 # start frame for the last white space
+                        white_end_frame = total_frames # last frame
+                        # white is [255,255,255] but rgbwill be swapped
+                        mat[:18,white_start_frame:white_end_frame,:] = 255
+                    
 
         img = QImage(mat,mat.shape[1],mat.shape[0],QImage.Format_RGB888).rgbSwapped()
         pixMap =  QPixmap.fromImage(img)
