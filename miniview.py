@@ -24,7 +24,7 @@ class Miniview():
                 start_frame = int(880*time[0]/total_frames)
                 end_frame = int(880*time[1]/total_frames)
                 
-                pixels = [255,0,0]  # red,green,blue
+                pixels = [0,0,255]  # red,green,blue
                 for j,pixel in enumerate(pixels):
                     mat[:18,start_frame:end_frame+1,j] = pixel
                 
@@ -37,7 +37,7 @@ class Miniview():
                 start_frame = int(880*time[0]/total_frames)
                 end_frame = int(880*time[1]/total_frames)
                 
-                pixels = [255,0,0] # red,green,blue
+                pixels = [0,0,255] # red,green,blue
                 for j,pixel in enumerate(pixels):
                     mat[:18,start_frame:end_frame+1,j] = pixel
                 
