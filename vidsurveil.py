@@ -250,10 +250,9 @@ class MainWindow(QtWidgets.QMainWindow):
         f = cv2.VideoCapture(self.curr_fileName)
         total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
         
-        self.npy_dict = {}
         files = sorted(os.listdir(os.path.join(self.save_dir,video)))
-        min_view = Miniview()
 
+        npy_merge = []
         for file in files:
             if file =='.DS_Store':
                 continue
@@ -261,17 +260,37 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             elif file.split('.')[1]=='npy':
                 x = np.load(os.path.join(self.save_dir,video,file))
+
+                if not np.any(npy_merge):
+                    #print('first merge')
+                    npy_merge = x
+                else:
+                    print('+1')
+                    npy_merge = np.vstack([npy_merge,x])
+
+                
                 if file.split('_')[0]=='MIL':
-                    scene_MIL = min_view.draw_anomalous_time(x,total_frames) 
+                    scene_MIL = Miniview().draw_anomalous_time(x,total_frames) 
                     self.ui.timeline_2.setScene(scene_MIL)          
                 elif file.split('_')[0]=='FF':
-                    scene_FF = min_view.draw_anomalous_time(x,total_frames) 
+                    scene_FF = Miniview().draw_anomalous_time(x,total_frames) 
                     self.ui.timeline_3.setScene(scene_FF)                          
                 elif file.split('_')[0]=='MNAD':
-                    scene_MNAD = min_view.draw_anomalous_time(x,total_frames) 
+                    scene_MNAD = Miniview().draw_anomalous_time(x,total_frames) 
                     self.ui.timeline_4.setScene(scene_MNAD) 
         
-                 
+        if np.any(npy_merge):
+            npy_merge = npy_merge.reshape(-1,2)
+            sorted_index = np.argsort(npy_merge,axis=0)[:,0]
+            npy_merge = npy_merge[sorted_index]
+            print(npy_merge.shape,'\n',npy_merge)
+
+            fps,final_time = Miniview().merge_frame(self.curr_fileName,npy_merge,interval=500)
+            print('final_time for {} is {}'.format(self.curr_fileName.split('/')[-1].split('.')[0],final_time))
+
+            scene_merged = Miniview().draw_anomalous_time(final_time,total_frames)
+            self.ui.timeline_1.setScene(scene_merged)
+
     def extract_video(self):
         #Extract(self.save_dir,self.curr_fileName)
         video = self.curr_fileName.split('/')[-1].split('.')[0]
@@ -297,39 +316,9 @@ class MainWindow(QtWidgets.QMainWindow):
         npy_merge = npy_merge[sorted_index]
         print(npy_merge.shape,'\n',npy_merge)
         
-        # find fps
-        result = subprocess.Popen(['ffprobe','-v','error','-select_streams','v','-of','default=noprint_wrappers=1:nokey=1','-show_entries','stream=r_frame_rate',self.curr_fileName],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        result.wait()
-        out = result.communicate()
-        message = out[0].decode()
-        message = message.split('\n')[0]
-        fps = int(message.split('/')[0])/int(message.split('/')[1])
-        print('fps: ',fps)
-        # initial start and end frame
-        final_time = []
-        start_frame = npy_merge[0,0]
-        end_frame = npy_merge[0,1]
-
-        added_frame = 0
-        for i in range(1,len(npy_merge)):
-            if (npy_merge[i,0] - start_frame)  > (500+added_frame):
-                # if the difference of start frames are more than 
-                #    500 frames, then they are regarded as independent(different) incidents
-                final_time.append([start_frame,end_frame])
-                start_frame = npy_merge[i,0]
-                end_frame = npy_merge[i,1]
-
-                # reset added_frame 
-                added_frame = 0
-            # the most inclusive end frame to include as many incidents(frames)
-            elif npy_merge[i,1] > end_frame:
-                end_frame = npy_merge[i,1]
-                added_frame += npy_merge[i,0]-npy_merge[i-1,0]
-            # add frame to allow including consecutive events.    
-            print('start frame: {}, end frame: {}, added_frame: {},total_frame: {}'.format(start_frame,end_frame,added_frame,final_time))
-        final_time.append([start_frame,end_frame])
-        final_time = np.array(final_time)
+        fps,final_time = Miniview().merge_frame(self.curr_fileName,npy_merge,interval=500)
         print('final_time for {} is {}'.format(video,final_time))
+
         for i, frames in enumerate(final_time):
             print(final_time[i,0]/fps,final_time[i,1]/fps)
             command = 'ffmpeg -ss ' + str(final_time[i,0]/fps)+ ' -i '+ self.curr_fileName + ' -to '+str((final_time[i,1]-final_time[i,0])/fps) + ' -c copy '+os.path.join(self.save_dir,video,video+'_extracted'+str(i)+'.mp4')
