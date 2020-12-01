@@ -66,6 +66,13 @@ class FFPA():
             out = result.communicate()
             print(out)
 
+            # remove resized files
+            command = 'rm ' + os.path.join(save_path,file_name)  
+            result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
+            result.wait()
+            out = result.communicate()
+            print(out)
+         
 
             videos = sorted(os.listdir(save_path))
             result_path = save_path + '/frames'
@@ -89,7 +96,7 @@ class FFPA():
                 print(output)
 
     def run_FFPA(self):
-        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,self.dataset,self.test_folder,self.gpu_id],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,self.dataset,self.test_folder,str(self.gpu_id)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)
