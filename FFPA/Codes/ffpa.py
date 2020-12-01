@@ -78,8 +78,8 @@ class FFPA():
             result_path = save_path + '/frames'
             self.test_folder = result_path
 
-            if not os.path.exists(result_path):
-                os.makedirs(result_path)
+            #if not os.path.exists(result_path):
+            #    os.makedirs(result_path)
 
             for video in videos:
                 input_video_path = os.path.join(save_path,video)
@@ -96,7 +96,7 @@ class FFPA():
                 print(output)
 
     def run_FFPA(self):
-        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,'--dataset '+self.dataset,'--test_folder '+self.test_folder,'--gpu '+str(self.gpu_id)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)
