@@ -39,20 +39,20 @@ class FFPA():
             assert file.split('.')[-1]=='mp4','the file has to be in mp4 format'
             file_name = file.split('/')[-1]
             #make a new directory for each file
-            save_path = os.path.join(self.temp_dir,file_name.split('.')[0])
-            self.save_path = os.path.join(save_path,'frames')
+            #save_path = os.path.join(self.temp_dir,file_name.split('.')[0])
+            self.save_path = os.path.join(self.temp_dir,'frames')
 
-            if not os.path.exists(save_path):
-                os.makedirs(save_path)
+            #if not os.path.exists(save_path):
+            #    os.makedirs(save_path)
             
-            self.temp_dir_arr.append(save_path)
+            #self.temp_dir_arr.append(save_path)
 
             # if file already exist in save_path, continue
-            if os.path.exists(os.path.join(save_path,file_name)):
+            if os.path.exists(self.save_path):
                 continue
             
             # copy each file to each new directory, after resizing it
-            command = 'ffmpeg -i ' + file + ' -filter:v scale="360:trunc(ow/a/2)*2" -c:a copy ' + os.path.join(save_path,file_name)
+            command = 'ffmpeg -i ' + file + ' -filter:v scale="360:trunc(ow/a/2)*2" -c:a copy ' + os.path.join(self.temp_dir,file_name)
             result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
             result.wait()
             out = result.communicate()
@@ -60,31 +60,31 @@ class FFPA():
 
 
             # cut into multiple segments
-            command = 'ffmpeg -i ' + os.path.join(save_path,file_name)  + ' -c copy -segment_time 8 -reset_timestamps 1 -f segment '+ save_path+ '/segment%03d.mp4'
+            command = 'ffmpeg -i ' + os.path.join(self.temp_dir,file_name)  + ' -c copy -segment_time 8 -reset_timestamps 1 -f segment '+ self.temp_dir+ '/segment%03d.mp4'
             result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
             result.wait()
             out = result.communicate()
             print(out)
 
             # remove resized files
-            command = 'rm ' + os.path.join(save_path,file_name)  
+            command = 'rm ' + os.path.join(self.temp_dir,file_name)  
             result = subprocess.Popen([command],shell=True,stderr=subprocess.PIPE)
             result.wait()
             out = result.communicate()
             print(out)
          
 
-            videos = sorted(os.listdir(save_path))
-            result_path = save_path + '/frames'
-            self.test_folder = result_path
+            videos = sorted(os.listdir(self.temp_dir))
+            #result_path = save_path + '/frames'
+            #self.test_folder = result_path
 
             #if not os.path.exists(result_path):
             #    os.makedirs(result_path)
 
             for video in videos:
-                input_video_path = os.path.join(save_path,video)
+                input_video_path = os.path.join(self.save_path,video)
         
-                output_directory_path = os.path.join(result_path,video.split('.')[0])
+                output_directory_path = os.path.join(self.save_path,video.split('.')[0])
 
                 file_name = video.split('.')[0] +'_%03d.jpg'
                 if not os.path.exists(output_directory_path):
