@@ -96,7 +96,7 @@ class FFPA():
                 print(output)
 
     def run_FFPA(self):
-        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,self.dataset,self.test_folder,str(self.gpu_id)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,'--dataset '+self.dataset,'--test_folder '+self.test_folder,'--gpu '+str(self.gpu_id)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)
