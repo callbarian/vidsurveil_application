@@ -269,10 +269,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.treeView2_2.setGeometry(QtCore.QRect(0, 0, 511, 271))
         self.treeView2_2.setAcceptDrops(True)
         self.treeView2_2.setObjectName("treeView2_2")
+        
+        ## button to run models
         self.run_mil_button = QtWidgets.QPushButton(self.tab)
         self.run_mil_button.setEnabled(True)
         self.run_mil_button.setGeometry(QtCore.QRect(80, 10, 112, 32))
         self.run_mil_button.setObjectName("run_mil_button")
+
+        self.run_ffpa_button = QtWidgets.QPushButton(self.tab)
+        self.run_ffpa_button.setEnabled(True)
+        self.run_ffpa_button.setGeometry(QtCore.QRect(200, 10, 112, 32))
+        self.run_ffpa_button.setObjectName("run_ffpa_button")
+
         self.tabWidget.addTab(self.tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
@@ -327,6 +335,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), _translate("MainWindow", "Original Videos"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Extracted Videos"))
         self.run_mil_button.setText(_translate("MainWindow", "Run MIL"))
+        self.run_ffpa_button.setText(_translate("MainWindow", "Run FFPA"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Model"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))

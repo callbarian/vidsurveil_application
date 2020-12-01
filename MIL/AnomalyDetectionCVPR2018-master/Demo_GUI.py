@@ -247,6 +247,8 @@ class PrettyWidget():
         # array of anomalous frames for all videos
         anomaly_arr = []
         for video in video_dir:
+            if os.path.exists(os.path.join(temp_dir,video,'MIL_'+video+'.npy')):
+                continue
             # for each original videos, process and retrieve anamolous frames
             files = sorted(os.listdir(os.path.join(temp_dir,video)))
             total_frame_arr = [] # count how many segments to analyze

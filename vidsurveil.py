@@ -3,6 +3,7 @@ import os
 import cv2
 from miniview import Miniview
 from MIL.Codes.mil2 import MIL
+from FFPA.Codes.ffpa import FFPA
 import numpy as np
 import subprocess 
 '''
@@ -93,6 +94,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.run_mil_button.pressed.connect(self.run_mil)
 
         ##---------------MIL end------------------##
+
+        ##---------------FFPA begin------------------##
+        # temporary directory to process files (MIL)
+        self.temp_dir_FFPA = os.getcwd()+'/FFPA/temp_dir'
+        if not os.path.exists(self.temp_dir_FFPA):
+            os.makedirs(self.temp_dir_FFPA)
+
+        # environment for FFPA(ano_pred_cvpr2018)
+        self.env_path_ffpa = '/home/callbarian/bin/miniconda3/envs/FFPA/bin/python'
+
+        #run model
+        self.ui.run_ffpa_button.pressed.connect(self.run_ffpa)
+
+        ##---------------FFPA end------------------##
 
         #start
         self.player = QMediaPlayer()
@@ -242,7 +257,13 @@ class MainWindow(QtWidgets.QMainWindow):
         mil.preprocess()
         mil.run_C3D()
         mil.run_MIL()
-        
+    
+    def run_ffpa(self):
+        assert self.path_name,'please select file first!'
+        ffpa = FFPA(self.path_name,self.temp_dir_FFPA,self.save_dir,self.env_path_ffpa)
+        ffpa.preprocess()
+        ffpa.run_FFPA()
+
     def show_timeline(self):
         video = self.curr_fileName.split('/')[-1].split('.')[0]
         assert os.path.exists(os.path.join(self.save_dir,video)),'folder to save input folder was not created, means no anomalous event was detected'
