@@ -2,8 +2,8 @@ import os
 import subprocess
 
 class FFPA():
-    def __init__():
-        def __init__(self,path_name,temp_dir,save_dir,env_path_FFPA):
+
+    def __init__(self,path_name,temp_dir,save_dir,env_path_FFPA):
         #input file path array(in full path)
         self.path_name = path_name
         
