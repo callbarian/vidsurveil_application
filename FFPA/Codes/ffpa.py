@@ -96,7 +96,7 @@ class FFPA():
                 print(output)
 
     def run_FFPA(self):
-        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result = subprocess.Popen(['sh',os.getcwd()+'/FFPA/Codes/call_environment.sh',self.env_path_FFPA,self.FFPA_path,'--dataset', 'mini'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result.wait()
         out = result.communicate()
         print(out)

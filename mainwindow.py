@@ -60,7 +60,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.time_left_label.setObjectName("time_left_label")
         self.video_player = QVideoWidget(self.first_mediaplayer)
         self.video_player.setEnabled(True)
-        self.video_player.setGeometry(QtCore.QRect(15, 19, 421, 211))
+        self.video_player.setGeometry(QtCore.QRect(20, 7, 419, 236))
         
         self.video_player.setAutoFillBackground(False)
         self.video_player.setStyleSheet("background-color: rgb(255, 255, 255);")

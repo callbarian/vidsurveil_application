@@ -136,7 +136,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mediaPlayer = QtMultimedia.QMediaPlayer(self)
         self.mediaPlayer.setVideoOutput(self.ui.video_player)
         
-        self.ui.video_player.resize(420,210)
+        #self.ui.video_player.resize(420,210)
         self.ui.playButton.pressed.connect(self.play)
         self.ui.pauseButton.pressed.connect(self.pause)
         self.ui.stopButton.pressed.connect(self.stop)
@@ -163,8 +163,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def open_file(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileNames(self, "videos")
+        path = ''.join(path)
         print(path)
-        while path:
+        #print(type(path))
+        path = self.video_resize(path)
+        path = [path]
+        
+        while path:    
             video=path.pop()
             self.path_name.append(video)
             self.playlist.addMedia(
@@ -172,9 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     QUrl.fromLocalFile(video)
                 )
             )
-
-        self.model.layoutChanged.emit()        
-
+        self.model.layoutChanged.emit() 
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
@@ -240,7 +243,23 @@ class MainWindow(QtWidgets.QMainWindow):
             url = QtCore.QUrl.fromLocalFile(self.curr_fileName)
             self.mediaPlayer.setMedia(QtMultimedia.QMediaContent(url))
             
-         
+    
+    def video_resize(self, path):
+        temp = path.split('/')[-1]
+        file_name = temp.split('.')[0] + '_resized.mp4'
+        new_path = path.split('/')[:-1]
+        new_path = '/'.join(new_path)
+        new_path = new_path + '/' + file_name
+        if not os.path.exists(new_path):
+      
+            command = 'ffmpeg -i ' + path + ' -vf scale=\"420:-1\" ' + new_path
+            print(command)
+            result = subprocess.Popen([command], shell=True)
+            result.wait()
+            output = result.communicate()
+            print(output)
+
+        return new_path         
 
     def toggle_viewer(self, state):
         if state:
