@@ -49,65 +49,6 @@ total_frame=0
 time_series=[]
 final_time_series=[]
 
-def save_video(save_path,video_path,frame_list,fps):
-    temp_path= save_path
-    file_name = video_path.split('/')[-1]
-    file_name = file_name.split('.')[0]
-    '''
-    if not os.path.isdir(temp_path):
-        os.mkdir(temp_path)
-    result_path='./result/'
-    if not os.path.isdir(result_path):
-        os.mkdir(result_path)
-    '''
-    print("frame_list : ",frame_list)
-    print("video_path : "+video_path)
-    
-    frame_to_seconds = []
-    frame_to_seconds.append("timestamps in seconds")
-    for each_framelists in frame_list:
-        start_frame = decimal.Decimal(each_framelists[0]/fps)
-        end_frame = decimal.Decimal(each_framelists[1]/fps)
-        frames_to_string = '[' + str('{:.2f}'.format(start_frame)) + ',' + str('{:.2f}'.format(end_frame)) + ']'
-        frame_to_seconds.append(frames_to_string)
-    
-    #print(frame_to_seconds)
-    
-    #'i' is the wanomaly video number 
-    i=0  
-    for frame_set in frame_list: 
-        #print('frame set :', frame_set)
-        #frame to time
-        frame_set[1]=(frame_set[1]-frame_set[0])/fps
-        frame_set[0]/=fps
-        #ffmpeg video extractiont
-        result=subprocess.Popen(['ffmpeg','-y','-ss',str(frame_set[0]),'-i',video_path, '-t',str(frame_set[1]), '-c', 'copy', save_path+file_name+str(i).zfill(4)+'.mp4'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)  
-        output = result.communicate()
-        print(output)
-        result.wait()
-        i+=1
-   
-   
-
-    
-    timestamp_name = file_name + '.txt'
-    
-    print(timestamp_name)
-
-    timestamp_path = save_path + timestamp_name
-
-    print(timestamp_path)
-
-    with open(timestamp_path,"w") as f:
-        for i in frame_to_seconds:
-            
-            f.write(str(i))
-            print(str(i))
-
-    print('save_video done')
-    
-    return
-
 def set_keras_backend(backend):
 
     if K.backend()!=backend:
@@ -152,11 +93,9 @@ def conv_dict(dict2): # Helper function to save the model
 
 
 def savitzky_golay(y, window_size, order, deriv=0, rate=1):
-    #try:
+
     window_size = np.abs(np.int(window_size))
     order = np.abs(np.int(order))
-    #except ValueError, msg:
-    #    raise ValueError("window_size and order have to be of type int")
 
     if window_size % 2 != 1 or window_size < 1:
         raise TypeError("window_size size must be a positive odd number")
@@ -183,13 +122,13 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
 
 def load_dataset_One_Video_Features(Test_Video_Path):
     
-    print(Test_Video_Path)
+    #print(Test_Video_Path)
     VideoPath =Test_Video_Path
     f = open(VideoPath, "r")
-    #words = ''
-    #with codecs.open(VideoPath,'r') as f:
+
+
     words = f.read().split()
-    #words = words.encode('us-ascii')
+
     num_feat = len(words) /4096
     # Number of features per video to be loaded. In our case num_feat=32, as we divide the video into 32 segments. Npte that
     # we have already computed C3D features for the whole video and divide the video features into 32 segments.
@@ -207,19 +146,11 @@ def load_dataset_One_Video_Features(Test_Video_Path):
 
     return  AllFeatures
 
-#class PrettyWidget(QtWidgets.QWidget):
+
 class PrettyWidget():
-    #def __init__(self):
-        #super(PrettyWidget, self).__init__()
-        #self.initUI()
-
     def __init__(self):
-        #self.setGeometry(500, 100, 500, 500)
-        #self.setWindowTitle('Anomaly Detection')
-        #btn = QtWidgets.QPushButton('ANOMALY DETECTION SYSTEM \n Please select video', self)
-
         Model_dir = os.getcwd()+'/MIL/AnomalyDetectionCVPR2018-master'
-        #Model_dir = os.getcwd()
+
         weights_path = Model_dir + '/weights_L1L2.mat'
         model_path = Model_dir + '/model.json'
         ########################################
@@ -227,24 +158,15 @@ class PrettyWidget():
         global model
         model = load_model(model_path)
         load_weights(model, weights_path)
-
-        #####   LOAD C3D Pre-Trained Network #####
-       # global score_function
-       # score_function = Initialization_function.get_prediction_function()
-
-        #global time_series
-        #global total_frame
-         
-        
         
         temp_dir = os.getcwd()+'/MIL/temp_dir'
-        #temp_dir = '/home/callbarian/vidsurveil_application/MIL/temp_dir'
-        #gt_path = './Test/gt_test'
+
+
 
         video_dir = sorted(os.listdir(temp_dir))
-        #gt_list = sorted(os.listdir(gt_path))
+
         
-        # array of anomalous frames for all videos
+        # array of anomalous frames
         anomaly_arr = []
         for video in video_dir:
             if os.path.exists(os.path.join(temp_dir,video,'MIL_'+video+'.npy')):
@@ -262,11 +184,14 @@ class PrettyWidget():
                     continue
                 else:
                     self.SingleBrowse(os.path.join(os.path.join(temp_dir,video,file)),total_frame_arr,anomalous_frames)
-            anomaly_arr.append(anomalous_frames)
+            
+            if any(anomalous_frames):
+                anomaly_arr.append(anomalous_frames)
         
             if np.any(anomaly_arr):
                 save_dir = os.getcwd()+'/save_dir/'+video
-                os.makedirs(save_dir)
+                if not os.path.exists(save_dir):
+                    os.makedirs(save_dir)
                 np.save(save_dir+'/MIL_'+video+'.npy',np.array(anomaly_arr))
                 #btn.move(150, 200)
                 #self.show() #uncomment if want to pop up the GUI Window
@@ -327,7 +252,7 @@ class PrettyWidget():
         
        #print('len of scores before savitzky golay {}'.format(len(scores1)))
         scores1 = savitzky_golay(scores1, 101, 3)
-        print('len of scores after savitzky golay {}\n'.format(len(scores1)))
+        #print('len of scores after savitzky golay {}\n'.format(len(scores1)))
         #savemat(save_path+file_name+'.mat',{'Score':scores1})
         #print("saving {}.mat".format(file_name))
         

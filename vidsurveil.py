@@ -26,6 +26,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtMultimediaWidgets import *
 
+np_load_old = np.load
+np.load = lambda *a,**k: np_load_old(*a, allow_pickle=True, **k)
+
 def hhmmss(ms):
     # s = 1000
     # m = 60000
@@ -285,8 +288,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_timeline(self):
         video = self.curr_fileName.split('/')[-1].split('.')[0]
-        assert os.path.exists(os.path.join(self.save_dir,video)),'folder to save input folder was not created, means no anomalous event was detected'
-        
+        if not os.path.exists(os.path.join(self.save_dir,video)):
+            print('folder to save input folder was not created, means no anomalous event was detected')
+            return
+         
         f = cv2.VideoCapture(self.curr_fileName)
         total_frames = f.get(cv2.CAP_PROP_FRAME_COUNT)
         
@@ -334,7 +339,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def extract_video(self):
         #Extract(self.save_dir,self.curr_fileName)
         video = self.curr_fileName.split('/')[-1].split('.')[0]
-        assert os.path.exists(os.path.join(self.save_dir,video)),'folder to save input folder was not created, means no anomalous event was detected'
+        if not os.path.exists(os.path.join(self.save_dir,video)):
+            print('folder to save input folder was not created, means no anomalous event was detected')
+            return
+
         npy_dict = {}
         npy_merge = []
         files = sorted(os.listdir(os.path.join(self.save_dir,video)))

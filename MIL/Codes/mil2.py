@@ -91,19 +91,20 @@ class MIL():
 
         for video_dir in sorted(os.listdir(video_path)):
             count=0
-        files = sorted(os.listdir(os.path.join(video_path,video_dir)))
-        for file in files:
             
-            #skip original videos
-            if file.split('.')[0] == video_dir or file.split('.')[1] != 'mp4':
-                print('skipping'.format(file))
-                continue
+            files = sorted(os.listdir(os.path.join(video_path,video_dir)))
+            for file in files:
+            
+                #skip original videos
+                if file.split('.')[0] == video_dir or file.split('.')[1] != 'mp4':
+                    print('skipping'.format(file))
+                    continue
 
-            # process each video segments
-            self.main(os.path.join(video_path,video_dir),file)
+                # process each video segments
+                self.main(os.path.join(video_path,video_dir),file)
 
-            count+=1
-        print('processed {} segments for {} '.format(count,video_dir))
+                count+=1
+            print('processed {} segments for {} '.format(count,video_dir))
  
         
         #result = subprocess.Popen(['sh',os.getcwd()+'/MIL/Codes/call_environment.sh',self.env_path_c3d,self.c3d_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
